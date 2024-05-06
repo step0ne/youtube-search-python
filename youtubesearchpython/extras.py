@@ -1716,6 +1716,7 @@ class Hashtag(HashtagCore):
         limit (int, optional): Sets limit to the number of results. Defaults to 20.
         language (str, optional): Sets the result language. Defaults to 'en'.
         region (str, optional): Sets the result region. Defaults to 'US'.
+        search_type (str, optional) : Select Search type "all", "shorts" or None(previous version)
     
     Examples:
         Calling `result` method gives the search result.
@@ -1785,8 +1786,8 @@ class Hashtag(HashtagCore):
         }
     '''
 
-    def __init__(self, hashtag: str, limit: int = 60, language: str = 'en', region: str = 'US', timeout: int = None):
-        super().__init__(hashtag, limit, language, region, timeout)
+    def __init__(self, hashtag: str, limit: int = 60, language: str = 'en', region: str = 'US', timeout: int = None, search_type:str = None):
+        super().__init__(hashtag, limit, language, region, timeout, search_type)
         self.sync_create()
 
 

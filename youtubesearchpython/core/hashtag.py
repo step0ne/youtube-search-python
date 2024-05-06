@@ -14,17 +14,21 @@ class HashtagCore(ComponentHandler):
     response = None
     resultComponents = []
 
-    def __init__(self, hashtag: str, limit: int, language: str, region: str, timeout: int):
+    def __init__(self, hashtag: str, limit: int, language: str, region: str, timeout: int, search_type: str):
         self.hashtag = hashtag
         self.limit = limit
         self.language = language
         self.region = region
         self.timeout = timeout
+        self.search_type = search_type
         self.continuationKey = None
         self.params = None
 
     def sync_create(self):
         self._getParams()
+        if self.search_type is not None:
+            self._getParamsSecond()
+
         self._makeRequest()
         self._getComponents()
 
@@ -111,7 +115,45 @@ class HashtagCore(ComponentHandler):
             if hashtagElementKey in item.keys():
                 self.params = self._getValue(item[hashtagElementKey], ['onTapCommand', 'browseEndpoint', 'params'])
                 return
-
+    
+    def _getParamsSecond(self) -> None:
+        if self.params == None:
+            return
+        requestBody = copy.deepcopy(requestPayload)
+        requestBody['browseId'] = hashtagBrowseKey
+        requestBody['params'] = self.params
+        requestBody['client'] = {
+            'hl': self.language,
+            'gl': self.region,
+        }
+        if self.continuationKey:
+            requestBody['continuation'] = self.continuationKey
+        requestBodyBytes = json.dumps(requestBody).encode('utf_8')
+        request = Request(
+            'https://www.youtube.com/youtubei/v1/browse' + '?' + urlencode({
+                'key': searchKey,
+            }),
+            data = requestBodyBytes,
+            headers = {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Content-Length': len(requestBodyBytes),
+                'User-Agent': userAgent,
+            }
+        )
+        try:
+            self.response = urlopen(request, timeout=self.timeout).read().decode('utf_8')
+        except:
+            raise Exception('ERROR: Could not make request.')
+        
+        if self.search_type == "all":
+            self.params = self._getValue(json.loads(self.response), hashtagBrowseAllPath)
+        elif self.search_type == "shorts":
+            self.params = self._getValue(json.loads(self.response), hashtagBrowseShortsPath)
+        else:
+            raise Exception("Unknown type of search_type")
+        if self.params is None:
+            raise Exception("Can't Find params!")
+        
     def _makeRequest(self) -> None:
         if self.params == None:
             return
