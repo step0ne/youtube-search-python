@@ -13,7 +13,7 @@ from youtubesearchpython.core.constants import *
 
 class Video:
     @staticmethod
-    def get(videoLink: str, mode: int = ResultMode.dict, timeout: int = None, get_upload_date: bool = False) -> Union[
+    def get(videoLink: str, mode: int = ResultMode.dict, timeout: int = None, get_upload_date: bool = False, overridedClient: str = "ANDROID") -> Union[
         dict, str, None]:
         '''Fetches information and formats  for the given video link or ID.
         Returns None if video is unavailable.
@@ -260,14 +260,14 @@ class Video:
                     ]
                 }
         '''
-        vc = VideoCore(videoLink, None, mode, timeout, get_upload_date)
+        vc = VideoCore(videoLink, None, mode, timeout, get_upload_date, overridedClient = overridedClient)
         if get_upload_date:
             vc.sync_html_create()
         vc.sync_create()
         return vc.result
 
     @staticmethod
-    def getInfo(videoLink: str, mode: int = ResultMode.dict, timeout: int = None) -> Union[dict, str, None]:
+    def getInfo(videoLink: str, mode: int = ResultMode.dict, timeout: int = None, overridedClient: str = "ANDROID") -> Union[dict, str, None]:
         '''Fetches only information for the given video link or ID.
         Returns None if video is unavailable.
 
@@ -348,13 +348,13 @@ class Video:
                 "link": "https://www.youtube.com/watch?v=E07s5ZYygMg",
             }
         '''
-        vc = VideoCore(videoLink, "getInfo", mode, timeout, True)
+        vc = VideoCore(videoLink, "getInfo", mode, timeout, True, overridedClient = overridedClient)
         vc.sync_html_create()
         vc.post_request_only_html_processing()
         return vc.result
 
     @staticmethod
-    def getFormats(videoLink: str, mode: int = ResultMode.dict, timeout: int = None) -> Union[dict, str, None]:
+    def getFormats(videoLink: str, mode: int = ResultMode.dict, timeout: int = None, overridedClient: str = "ANDROID") -> Union[dict, str, None]:
         '''Fetches formats  for the given video link or ID.
         Returns None if video is unavailable.
 
@@ -535,7 +535,7 @@ class Video:
                 }
             }
         '''
-        vc = VideoCore(videoLink, "getFormats", mode, timeout, False)
+        vc = VideoCore(videoLink, "getFormats", mode, timeout, False, overridedClient = overridedClient)
         vc.sync_create()
         return vc.result
 
