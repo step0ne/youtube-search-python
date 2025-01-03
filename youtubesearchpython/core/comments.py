@@ -41,10 +41,15 @@ class CommentsCore(RequestCore):
 
     def parse_source(self):
         self.responseSource = getValue(self.response.json(), [
-            "onResponseReceivedEndpoints",
-            0 if self.isNextRequest else 1,
-            "appendContinuationItemsAction" if self.isNextRequest else "reloadContinuationItemsCommand",
-            "continuationItems",
+            "frameworkUpdates",
+            "entityBatchUpdate",
+            "mutations",
+            # "onResponseReceivedEndpoints",
+            # 0 if self.isNextRequest else 1,
+            # 1,
+            # "appendContinuationItemsAction" if self.isNextRequest else "reloadContinuationItemsCommand",
+            # "reloadContinuationItemsCommand",
+            # "continuationItems",
         ])
 
     def parse_continuation_source(self):
@@ -122,29 +127,30 @@ class CommentsCore(RequestCore):
     def __getComponents(self) -> None:
         comments = []
         for comment in self.responseSource:
-            comment = getValue(comment, ["commentThreadRenderer", "comment", "commentRenderer"])
-            #print(json.dumps(comment, indent=4))
+            comment = getValue(comment, ["payload", "commentEntityPayload"])
+            # print(json.dumps(comment, indent=4))
+            if comment is None:
+                continue
             try:
                 j = {
-                    "id": self.__getValue(comment, ["commentId"]),
+                    "id": self.__getValue(comment, ["key"]),
                     "author": {
-                        "id": self.__getValue(comment, ["authorEndpoint", "browseEndpoint", "browseId"]),
-                        "name": self.__getValue(comment, ["authorText", "simpleText"]),
-                        "thumbnails": self.__getValue(comment, ["authorThumbnail", "thumbnails"])
+                        "id": self.__getValue(comment, ["author", "channelId"]),
+                        "name": self.__getValue(comment, ["author", "displayName"]),
+                        "thumbnails": self.__getValue(comment, ["author", "avatarThumbnailUrl"]),
+                        "is_verified": self.__getValue(comment, ["author", "isVerified"]),
+                        "is_creator": self.__getValue(comment, ["author", "isCreator"]),
+                        "is_artist": self.__getValue(comment, ["author", "isArtist"])
                     },
-                    "content": self.__getValue(comment, ["contentText", "runs", 0, "text"]),
-                    "published": self.__getValue(comment, ["publishedTimeText", "runs", 0, "text"]),
-                    "isLiked": self.__getValue(comment, ["isLiked"]),
-                    "authorIsChannelOwner": self.__getValue(comment, ["authorIsChannelOwner"]),
-                    "voteStatus": self.__getValue(comment, ["voteStatus"]),
-                    "votes": {
-                        "simpleText": self.__getValue(comment, ["voteCount", "simpleText"]),
-                        "label": self.__getValue(comment, ["voteCount", "accessibility", "accessibilityData", "label"])
-                    },
-                    "replyCount": self.__getValue(comment, ["replyCount"]),
+                    "content": self.__getValue(comment, ["properties", "content", "content"]),
+                    "published": self.__getValue(comment, ["properties", "publishedTime"]),
+                    "like_count": self.__getValue(comment, ["toolbar", "likeCountA11y"]),
+                    "reply_count": self.__getValue(comment, ["toolbar", "replyCountA11y"]),
                 }
+                # print(json.dumps(j, indent=4))
                 comments.append(j)
-            except:
+            except Exception as e:
+                print(e)
                 pass
 
         self.commentsComponent["result"].extend(comments)
