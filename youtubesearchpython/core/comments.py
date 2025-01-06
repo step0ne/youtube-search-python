@@ -134,6 +134,7 @@ class CommentsCore(RequestCore):
             try:
                 j = {
                     "id": self.__getValue(comment, ["key"]),
+                    "videoLink": self.videoLink,
                     "author": {
                         "id": self.__getValue(comment, ["author", "channelId"]),
                         "name": self.__getValue(comment, ["author", "displayName"]),
