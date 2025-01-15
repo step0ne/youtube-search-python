@@ -153,6 +153,46 @@ class HashtagCore(ComponentHandler):
             raise Exception("Unknown type of search_type")
         if self.params is None:
             raise Exception("Can't Find params!")
+    
+    async def _asyncGetParamsSecond(self) -> None:
+        if self.params == None:
+            return
+        
+        requestBody = copy.deepcopy(requestPayload)
+        requestBody['browseId'] = hashtagBrowseKey
+        requestBody['params'] = self.params
+        requestBody['client'] = {
+            'hl': self.language,
+            'gl': self.region,
+        }
+        if self.continuationKey:
+            requestBody['continuation'] = self.continuationKey
+
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    'https://www.youtube.com/youtubei/v1/search',
+                    params = {
+                        'key': searchKey,
+                    },
+                    headers = {
+                        'User-Agent': userAgent,
+                    },
+                    json = requestBody,
+                    timeout = self.timeout
+                )
+                response = response.json()
+        except:
+            raise Exception('ERROR: Could not make request.')
+        
+        if self.search_type == "all":
+            self.params = self._getValue(json.loads(self.response), hashtagBrowseAllPath)
+        elif self.search_type == "shorts":
+            self.params = self._getValue(json.loads(self.response), hashtagBrowseShortsPath)
+        else:
+            raise Exception("Unknown type of search_type")
+        if self.params is None:
+            raise Exception("Can't Find params!")
         
     def _makeRequest(self) -> None:
         if self.params == None:

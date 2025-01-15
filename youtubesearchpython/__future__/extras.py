@@ -1829,8 +1829,8 @@ class Hashtag(HashtagCore):
         }
     '''
 
-    def __init__(self, hashtag: str, limit: int = 60, language: str = 'en', region: str = 'US', timeout: int = None):
-        super().__init__(hashtag, limit, language, region, timeout)
+    def __init__(self, hashtag: str, limit: int = 60, language: str = 'en', region: str = 'US', timeout: int = None, search_type:str = None):
+        super().__init__(hashtag, limit, language, region, timeout, search_type)
 
     async def next(self) -> dict:
         '''Gets the videos from the next page.
@@ -1841,6 +1841,10 @@ class Hashtag(HashtagCore):
         self.resultComponents = []
         if self.params is None:
             await self._asyncGetParams()
+        
+            if self.search_type is not None:
+                self._getParamsSecond()
+        
         await self._asyncMakeRequest()
         self._getComponents()
         return {

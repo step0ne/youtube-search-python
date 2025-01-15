@@ -5,7 +5,7 @@ with open("README.md", "r", encoding = "utf-8") as fh:
 
 setuptools.setup(
     name="youtube-search-python",
-    version="1.6.9",
+    version="1.6.10",
     author="Hitesh Kumar Saini",
     license='MIT',
     author_email="saini123hitesh@gmail.com",
