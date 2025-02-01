@@ -3,7 +3,8 @@ import copy
 import itertools
 import json
 import re
-from typing import Iterable, Mapping, Tuple, TypeVar, Union, List
+import httpx
+from typing import Iterable, Mapping, Optional, Tuple, TypeVar, Union, List
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -20,7 +21,8 @@ class PlaylistCore(RequestCore):
     result = None
     continuationKey = None
 
-    def __init__(self, playlistLink: str, componentMode: str, resultMode: int, timeout: int):
+    def __init__(self, playlistLink: str, componentMode: str, resultMode: int, timeout: int, async_client: Optional[httpx.AsyncClient] = None):
+        self.async_client = async_client
         super().__init__()
         self.componentMode = componentMode
         self.resultMode = resultMode

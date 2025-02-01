@@ -1,6 +1,7 @@
 import copy
-from typing import Union
+from typing import Optional, Union
 import json
+import httpx
 from urllib.parse import urlencode
 
 from youtubesearchpython.core.requests import RequestCore
@@ -13,7 +14,8 @@ class ChannelSearchCore(RequestCore, ComponentHandler):
     responseSource = None
     resultComponents = []
 
-    def __init__(self, query: str, language: str, region: str, searchPreferences: str, browseId: str, timeout: int):
+    def __init__(self, query: str, language: str, region: str, searchPreferences: str, browseId: str, timeout: int, async_client: Optional[httpx.AsyncClient] = None):
+        self.async_client = async_client
         super().__init__()
         self.query = query
         self.language = language

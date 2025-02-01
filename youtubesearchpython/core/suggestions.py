@@ -1,5 +1,5 @@
 import json
-from typing import Union
+from typing import Optional, Union
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -41,7 +41,8 @@ class SuggestionsCore(RequestCore):
         }
     '''
 
-    def __init__(self, language: str = 'en', region: str = 'US', timeout: int = None):
+    def __init__(self, language: str = 'en', region: str = 'US', timeout: int = None, async_client: Optional[httpx.AsyncClient] = None):
+        self.async_client = async_client
         super().__init__()
         self.language = language
         self.region = region

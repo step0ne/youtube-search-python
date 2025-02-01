@@ -2,7 +2,8 @@ import collections
 import copy
 import itertools
 import json
-from typing import Iterable, Mapping, Tuple, TypeVar, Union, List
+import httpx
+from typing import Iterable, Mapping, Optional, Tuple, TypeVar, Union, List
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -20,7 +21,8 @@ class CommentsCore(RequestCore):
     isNextRequest = False
     response = None
 
-    def __init__(self, videoLink: str):
+    def __init__(self, videoLink: str, async_client: Optional[httpx.AsyncClient] = None):
+        self.async_client = async_client
         super().__init__()
         self.commentsComponent = {"result": []}
         self.responseSource = None

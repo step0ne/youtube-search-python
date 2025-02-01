@@ -1,6 +1,7 @@
 import copy
 import json
-from typing import Union, List
+import httpx
+from typing import Optional, Union, List
 from urllib.parse import urlencode
 
 from youtubesearchpython.core.constants import *
@@ -53,7 +54,8 @@ CLIENTS = {
 
 
 class VideoCore(RequestCore):
-    def __init__(self, videoLink: str, componentMode: str, resultMode: int, timeout: int, enableHTML: bool, overridedClient: str = "ANDROID"):
+    def __init__(self, videoLink: str, componentMode: str, resultMode: int, timeout: int, enableHTML: bool, overridedClient: str = "ANDROID", async_client: Optional[httpx.AsyncClient] = None):
+        self.async_client = async_client
         super().__init__()
         self.timeout = timeout
         self.resultMode = resultMode

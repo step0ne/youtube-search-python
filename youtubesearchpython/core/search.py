@@ -1,5 +1,5 @@
 import copy
-from typing import Union
+from typing import Optional, Union
 from urllib.parse import urlencode
 
 from youtubesearchpython.core.requests import RequestCore
@@ -8,14 +8,15 @@ from youtubesearchpython.handlers.requesthandler import RequestHandler
 from youtubesearchpython.core.constants import *
 
 import json
-
+import httpx
 
 class SearchCore(RequestCore, RequestHandler, ComponentHandler):
     response = None
     responseSource = None
     resultComponents = []
 
-    def __init__(self, query: str, limit: int, language: str, region: str, searchPreferences: str, timeout: int):
+    def __init__(self, query: str, limit: int, language: str, region: str, searchPreferences: str, timeout: int, async_client: Optional[httpx.AsyncClient] = None):
+        self.async_client = async_client
         super().__init__()
         self.query = query
         self.limit = limit

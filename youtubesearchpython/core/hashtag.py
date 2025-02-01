@@ -1,6 +1,6 @@
 import copy
 import json
-from typing import Union
+from typing import Optional, Union
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -14,7 +14,8 @@ class HashtagCore(ComponentHandler):
     response = None
     resultComponents = []
 
-    def __init__(self, hashtag: str, limit: int, language: str, region: str, timeout: int, search_type: str):
+    def __init__(self, hashtag: str, limit: int, language: str, region: str, timeout: int, search_type: str, async_client: Optional[httpx.AsyncClient] = None):
+        self.async_client = async_client
         self.hashtag = hashtag
         self.limit = limit
         self.language = language

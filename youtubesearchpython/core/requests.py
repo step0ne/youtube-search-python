@@ -26,6 +26,11 @@ class RequestCore:
         )
 
     async def asyncPostRequest(self) -> httpx.Response:
+        if hasattr(self, "async_client"):
+            if self.async_client:
+                r = await self.async_client.post(self.url, headers={"User-Agent": userAgent}, json=self.data, timeout=self.timeout)
+                return r
+        
         async with httpx.AsyncClient(proxies=self.proxy) as client:
             r = await client.post(self.url, headers={"User-Agent": userAgent}, json=self.data, timeout=self.timeout)
             return r
@@ -34,6 +39,11 @@ class RequestCore:
         return httpx.get(self.url, headers={"User-Agent": userAgent}, timeout=self.timeout, cookies={'CONSENT': 'YES+1'}, proxies=self.proxy)
 
     async def asyncGetRequest(self) -> httpx.Response:
+        if hasattr(self, "async_client"):
+            if self.async_client:
+                r = await self.async_client.get(self.url, headers={"User-Agent": userAgent}, timeout=self.timeout, cookies={'CONSENT': 'YES+1'})
+                return r
+        
         async with httpx.AsyncClient(proxies=self.proxy) as client:
             r = await client.get(self.url, headers={"User-Agent": userAgent}, timeout=self.timeout, cookies={'CONSENT': 'YES+1'})
             return r

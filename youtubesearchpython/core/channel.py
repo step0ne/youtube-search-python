@@ -1,6 +1,7 @@
 import copy
 import json
-from typing import Union, List
+import httpx
+from typing import Optional, Union, List
 from urllib.parse import urlencode
 
 from youtubesearchpython.core.constants import *
@@ -9,7 +10,8 @@ from youtubesearchpython.core.componenthandler import getValue, getVideoId
 
 
 class ChannelCore(RequestCore):
-    def __init__(self, channel_id: str, request_params: str):
+    def __init__(self, channel_id: str, request_params: str, async_client: Optional[httpx.AsyncClient] = None):
+        self.async_client = async_client
         super().__init__()
         self.browseId = channel_id
         self.params = request_params
