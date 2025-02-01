@@ -1,5 +1,6 @@
 import copy
-from typing import Union
+import httpx
+from typing import Optional, Union
 
 from youtubesearchpython.core import VideoCore
 from youtubesearchpython.core.comments import CommentsCore
@@ -1829,8 +1830,8 @@ class Hashtag(HashtagCore):
         }
     '''
 
-    def __init__(self, hashtag: str, limit: int = 60, language: str = 'en', region: str = 'US', timeout: int = None, search_type:str = None):
-        super().__init__(hashtag, limit, language, region, timeout, search_type)
+    def __init__(self, hashtag: str, limit: int = 60, language: str = 'en', region: str = 'US', timeout: int = None, search_type:str = None, async_client: Optional[httpx.AsyncClient] = None):
+        super().__init__(hashtag, limit, language, region, timeout, search_type, async_client = async_client)
 
     async def next(self) -> dict:
         '''Gets the videos from the next page.
@@ -1871,8 +1872,8 @@ class Comments:
         self.hasMoreComments = self.__comments.continuationKey is not None
 
     @staticmethod
-    async def get(playlistLink: str) -> Union[dict, str, None]:
-        pc = CommentsCore(playlistLink)
+    async def get(playlistLink: str, async_client: Optional[httpx.AsyncClient] = None) -> Union[dict, str, None]:
+        pc = CommentsCore(playlistLink, async_client= async_client)
         await pc.async_create()
         return pc.commentsComponent
 
@@ -1896,7 +1897,7 @@ class Channel(ChannelCore):
         await self.async_next()
 
     @staticmethod
-    async def get(channel_id: str, request_type: str = ChannelRequestType.playlists):
-        channel_core = ChannelCore(channel_id, request_type)
+    async def get(channel_id: str, request_type: str = ChannelRequestType.playlists, async_client: Optional[httpx.AsyncClient] = None):
+        channel_core = ChannelCore(channel_id, request_type, async_client = async_client)
         await channel_core.async_create()
         return channel_core.result
