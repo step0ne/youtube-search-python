@@ -6,7 +6,7 @@ from youtubesearchpython import CustomSearch, VideoSortOrder, Hashtag
 iso_language = None
 region = None
 search_limit = 10_000
-query="csgo"
+query="cs2"
 
 def test_custom_search():
     result_list = []

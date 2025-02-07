@@ -7,14 +7,16 @@ from urllib.request import Request, urlopen
 import httpx
 
 from youtubesearchpython.core.constants import *
+from youtubesearchpython.core.requests import RequestCore
 from youtubesearchpython.handlers.componenthandler import ComponentHandler
 
 
-class HashtagCore(ComponentHandler):
+class HashtagCore(RequestCore, ComponentHandler):
     response = None
     resultComponents = []
 
     def __init__(self, hashtag: str, limit: int, language: str, region: str, timeout: int, search_type: str, async_client: Optional[httpx.AsyncClient] = None):
+        super().__init__()
         self.async_client = async_client
         self.hashtag = hashtag
         self.limit = limit
@@ -66,20 +68,15 @@ class HashtagCore(ComponentHandler):
             'hl': self.language,
             'gl': self.region,
         }
-        requestBodyBytes = json.dumps(requestBody).encode('utf_8')
-        request = Request(
-            'https://www.youtube.com/youtubei/v1/search' + '?' + urlencode({
+
+        self.data = requestBody
+        self.url = 'https://www.youtube.com/youtubei/v1/search' + '?' + urlencode({
                 'key': searchKey,
-            }),
-            data = requestBodyBytes,
-            headers = {
-                'Content-Type': 'application/json; charset=utf-8',
-                'Content-Length': len(requestBodyBytes),
-                'User-Agent': userAgent,
-            }
-        )
+            })
+        
+        request = self.syncPostRequest()
         try:
-            response = urlopen(request, timeout=self.timeout).read().decode('utf_8')
+            response = request.text
         except:
             raise Exception('ERROR: Could not make request.')
         content = self._getValue(json.loads(response), contentPath)
@@ -95,20 +92,11 @@ class HashtagCore(ComponentHandler):
             'hl': self.language,
             'gl': self.region,
         }
+        self.url = 'https://www.youtube.com/youtubei/v1/search'
+        self.data = requestBody
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    'https://www.youtube.com/youtubei/v1/search',
-                    params = {
-                        'key': searchKey,
-                    },
-                    headers = {
-                        'User-Agent': userAgent,
-                    },
-                    json = requestBody,
-                    timeout = self.timeout
-                )
-                response = response.json()
+            response = await self.asyncPostRequest()
+            response = response.json()
         except:
             raise Exception('ERROR: Could not make request.')
         content = self._getValue(response, contentPath)
@@ -129,20 +117,14 @@ class HashtagCore(ComponentHandler):
         }
         if self.continuationKey:
             requestBody['continuation'] = self.continuationKey
-        requestBodyBytes = json.dumps(requestBody).encode('utf_8')
-        request = Request(
-            'https://www.youtube.com/youtubei/v1/browse' + '?' + urlencode({
+        
+        self.url = 'https://www.youtube.com/youtubei/v1/browse' + '?' + urlencode({
                 'key': searchKey,
-            }),
-            data = requestBodyBytes,
-            headers = {
-                'Content-Type': 'application/json; charset=utf-8',
-                'Content-Length': len(requestBodyBytes),
-                'User-Agent': userAgent,
-            }
-        )
+            })
+        self.data = requestBody
+        request = self.syncPostRequest()
         try:
-            self.response = urlopen(request, timeout=self.timeout).read().decode('utf_8')
+            self.response = request.text
         except:
             raise Exception('ERROR: Could not make request.')
         
@@ -168,21 +150,14 @@ class HashtagCore(ComponentHandler):
         }
         if self.continuationKey:
             requestBody['continuation'] = self.continuationKey
-
+        
+        self.url = 'https://www.youtube.com/youtubei/v1/browse' + '?' + urlencode({
+                'key': searchKey,
+            })
+        self.data = requestBody
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    'https://www.youtube.com/youtubei/v1/search',
-                    params = {
-                        'key': searchKey,
-                    },
-                    headers = {
-                        'User-Agent': userAgent,
-                    },
-                    json = requestBody,
-                    timeout = self.timeout
-                )
-                response = response.json()
+            response = await self.asyncPostRequest()
+            self.response = response.content
         except:
             raise Exception('ERROR: Could not make request.')
         
@@ -207,20 +182,15 @@ class HashtagCore(ComponentHandler):
         }
         if self.continuationKey:
             requestBody['continuation'] = self.continuationKey
-        requestBodyBytes = json.dumps(requestBody).encode('utf_8')
-        request = Request(
-            'https://www.youtube.com/youtubei/v1/browse' + '?' + urlencode({
+        # requestBodyBytes = json.dumps(requestBody).encode('utf_8')
+        self.data = requestBody
+        self.url = 'https://www.youtube.com/youtubei/v1/browse' + '?' + urlencode({
                 'key': searchKey,
-            }),
-            data = requestBodyBytes,
-            headers = {
-                'Content-Type': 'application/json; charset=utf-8',
-                'Content-Length': len(requestBodyBytes),
-                'User-Agent': userAgent,
-            }
-        )
+            })
+        
+        request = self.syncPostRequest()
         try:
-            self.response = urlopen(request, timeout=self.timeout).read().decode('utf_8')
+            self.response = request.text
         except:
             raise Exception('ERROR: Could not make request.')
 
@@ -236,20 +206,12 @@ class HashtagCore(ComponentHandler):
         }
         if self.continuationKey:
             requestBody['continuation'] = self.continuationKey
+        
+        self.url = 'https://www.youtube.com/youtubei/v1/browse'
+        self.data = requestBody
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    'https://www.youtube.com/youtubei/v1/browse',
-                    params = {
-                        'key': searchKey,
-                    },
-                    headers = {
-                        'User-Agent': userAgent,
-                    },
-                    json = requestBody,
-                    timeout = self.timeout
-                )
-                self.response = response.content
+            response = await self.asyncPostRequest()
+            self.response = response.content
         except:
             raise Exception('ERROR: Could not make request.')
 
