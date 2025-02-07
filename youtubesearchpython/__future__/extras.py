@@ -1844,7 +1844,7 @@ class Hashtag(HashtagCore):
             await self._asyncGetParams()
         
             if self.search_type is not None:
-                self._getParamsSecond()
+                self._asyncGetParamsSecond()
         
         await self._asyncMakeRequest()
         self._getComponents()
