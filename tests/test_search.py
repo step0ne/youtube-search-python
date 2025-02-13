@@ -36,6 +36,35 @@ def test_custom_search():
 
     # return True
 
+def test_custom_search_short():
+    result_list = []
+    customSearch = CustomSearch(
+        query, 
+        VideoSortOrder.uploadDate, 
+        language = "ru" if iso_language is None else iso_language,
+        region = "RU" if region is None else region,
+        limit = search_limit,
+        short_component = True
+        )
+    
+    result_list.extend(customSearch.result()["result"])
+    assert len(result_list) > 0 , "Получили пустую выдачу"
+    while customSearch._next():
+        print(len(result_list))
+        currient_result = customSearch.result()["result"]
+        
+        if currient_result is None:
+            break
+        
+        result_list.extend(currient_result)
+        if len(currient_result) == 0:
+            break    
+        break
+        # if currient_result[-1].get("publishedTime","").find(query_early_stop) != -1:
+        #     break
+
+    # return True
+
 def test_hashtag_search_all():
     hastag_obj = Hashtag(
         query, 

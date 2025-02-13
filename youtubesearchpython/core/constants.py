@@ -14,6 +14,7 @@ userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML
 
 
 videoElementKey = 'videoRenderer'
+shortsElementKey = 'shortsLockupViewModel'
 channelElementKey = 'channelRenderer'
 playlistElementKey = 'playlistRenderer'
 shelfElementKey = 'shelfRenderer'
@@ -24,6 +25,7 @@ richItemKey = 'richItemRenderer'
 hashtagElementKey = 'hashtagTileRenderer'
 hashtagBrowseKey = 'FEhashtag'
 hashtagVideosPath = ['contents', 'twoColumnBrowseResultsRenderer', 'tabs', 0, 'tabRenderer', 'content', 'richGridRenderer', 'contents']
+hashtagShortsVideosPath = ['contents', 'twoColumnBrowseResultsRenderer', 'tabs', 1, 'tabRenderer', 'content', 'richGridRenderer', 'contents']
 hashtagBrowseAllPath = ["contents","twoColumnBrowseResultsRenderer","tabs",0,"tabRenderer","endpoint","browseEndpoint","params"]
 hashtagBrowseShortsPath = ["contents","twoColumnBrowseResultsRenderer","tabs",1,"tabRenderer","endpoint","browseEndpoint","params"]
 hashtagContinuationVideosPath = ['onResponseReceivedActions', 0, 'appendContinuationItemsAction', 'continuationItems']

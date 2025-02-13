@@ -15,9 +15,10 @@ class SearchCore(RequestCore, RequestHandler, ComponentHandler):
     responseSource = None
     resultComponents = []
 
-    def __init__(self, query: str, limit: int, language: str, region: str, searchPreferences: str, timeout: int, async_client: Optional[httpx.AsyncClient] = None):
-        self.async_client = async_client
+    def __init__(self, query: str, limit: int, language: str, region: str, searchPreferences: str, timeout: int, short_component: bool = False, async_client: Optional[httpx.AsyncClient] = None):
         super().__init__()
+        self.async_client = async_client
+        self.short_component = short_component
         self.query = query
         self.limit = limit
         self.language = language
@@ -112,7 +113,7 @@ class SearchCore(RequestCore, RequestHandler, ComponentHandler):
         self.resultComponents = []
         for element in self.responseSource:
             if videoElementKey in element.keys() and findVideos:
-                self.resultComponents.append(self._getVideoComponent(element))
+                self.resultComponents.append(self._getVideoComponent(element) if not self.short_component else self._getVideoShortComponent(element))
             if channelElementKey in element.keys() and findChannels:
                 self.resultComponents.append(self._getChannelComponent(element))
             if playlistElementKey in element.keys() and findPlaylists:
@@ -120,12 +121,12 @@ class SearchCore(RequestCore, RequestHandler, ComponentHandler):
             if shelfElementKey in element.keys() and findVideos:
                 for shelfElement in self._getShelfComponent(element)['elements']:
                     self.resultComponents.append(
-                        self._getVideoComponent(shelfElement, shelfTitle=self._getShelfComponent(element)['title']))
+                        self._getVideoComponent(shelfElement, shelfTitle=self._getShelfComponent(element)['title']) if not self.short_component else self._getVideoShortComponent(shelfElement, shelfTitle=self._getShelfComponent(element)['title']))
             if richItemKey in element.keys() and findVideos:
                 richItemElement = self._getValue(element, [richItemKey, 'content'])
                 ''' Initial fallback handling for VideosSearch '''
                 if videoElementKey in richItemElement.keys():
-                    videoComponent = self._getVideoComponent(richItemElement)
+                    videoComponent = self._getVideoComponent(richItemElement) if not self.short_component else self._getVideoShortComponent(richItemElement)
                     self.resultComponents.append(videoComponent)
             if len(self.resultComponents) >= self.limit:
                 break

@@ -14,6 +14,7 @@ async def find_all(
         hashtag_search = False,
         search_type = "all",
         request_id: Union[str, None] = None,
+        short_component: bool = False,
         **kwargs
     ):  
     if hashtag_search:
@@ -31,6 +32,7 @@ async def find_all(
             language = "ru" if iso_language is None else iso_language,
             region = "RU" if region is None else region,
             limit = search_limit,
+            short_component = short_component
         )
 
     result_list = []
@@ -54,6 +56,7 @@ async def find_all(
             unique_id_set.add(result_dict.get("id", None))
         
         if len(unique_id_set) == unique_id_set_last_len:
+            print("No new Unique objects")
             # TODO может быть стоит несколько раз ретраить?(вроде как и так сойдёт)
             break
         
@@ -70,6 +73,11 @@ async def find_all(
 @pytest.mark.asyncio
 async def test_custom_search():
     result = await find_all()
+    assert len(result["result"]) > 0
+
+@pytest.mark.asyncio
+async def test_custom_search_short():
+    result = await find_all(short_component=True)
     assert len(result["result"]) > 0
 
 @pytest.mark.asyncio

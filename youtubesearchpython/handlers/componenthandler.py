@@ -33,6 +33,66 @@ class ComponentHandler:
         component['shelfTitle'] = shelfTitle
         return component
 
+    def _getVideoShortComponent(self, element: dict, shelfTitle: str = None) -> dict:
+        video = element[videoElementKey]
+        component = {
+            'type':                           'video',
+            'id':                              self._getValue(video, ['videoId']),
+            'title':                           self._getValue(video, ['title', 'runs', 0, 'text']),
+            # 'publishedTime':                   self._getValue(video, ['publishedTimeText', 'simpleText']),
+            # 'duration':                        self._getValue(video, ['lengthText', 'simpleText']),
+            # 'viewCount': {
+            #     'text':                        self._getValue(video, ['viewCountText', 'simpleText']),
+            #     'short':                       self._getValue(video, ['shortViewCountText', 'simpleText']),
+            # },
+            # 'thumbnails':                      self._getValue(video, ['thumbnail', 'thumbnails']),
+            # 'richThumbnail':                   self._getValue(video, ['richThumbnail', 'movingThumbnailRenderer', 'movingThumbnailDetails', 'thumbnails', 0]),
+            # 'descriptionSnippet':              self._getValue(video, ['detailedMetadataSnippets', 0, 'snippetText', 'runs']),
+            # 'channel': {
+            #     'name':                        self._getValue(video, ['ownerText', 'runs', 0, 'text']),
+            #     'id':                          self._getValue(video, ['ownerText', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId']),
+            #     'thumbnails':                  self._getValue(video, ['channelThumbnailSupportedRenderers', 'channelThumbnailWithLinkRenderer', 'thumbnail', 'thumbnails']),
+            # },
+            # 'accessibility': {
+            #     'title':                       self._getValue(video, ['title', 'accessibility', 'accessibilityData', 'label']),
+            #     'duration':                    self._getValue(video, ['lengthText', 'accessibility', 'accessibilityData', 'label']),
+            # },
+        }
+        # component['link'] = 'https://www.youtube.com/watch?v=' + component['id']
+        # component['channel']['link'] = 'https://www.youtube.com/channel/' + component['channel']['id']
+        # component['shelfTitle'] = shelfTitle
+        return component
+
+    def _getShortsComponent(self, element: dict, shelfTitle: str = None) -> dict:
+        video = element[shortsElementKey]
+        component = {
+            'type':                           'video',
+            'id':                              self._getValue(video, ['onTap', 'innertubeCommand', 'reelWatchEndpoint', 'videoId']),
+            'title':                           self._getValue(video, ['accessibilityText']),
+            # 'publishedTime':                   self._getValue(video, ['publishedTimeText', 'simpleText']),
+            # 'duration':                        self._getValue(video, ['lengthText', 'simpleText']),
+            # 'viewCount': {
+            #     'text':                        self._getValue(video, ['viewCountText', 'simpleText']),
+            #     'short':                       self._getValue(video, ['shortViewCountText', 'simpleText']),
+            # },
+            # 'thumbnails':                      self._getValue(video, ['thumbnail', 'thumbnails']),
+            # 'richThumbnail':                   self._getValue(video, ['richThumbnail', 'movingThumbnailRenderer', 'movingThumbnailDetails', 'thumbnails', 0]),
+            # 'descriptionSnippet':              self._getValue(video, ['detailedMetadataSnippets', 0, 'snippetText', 'runs']),
+            # 'channel': {
+            #     'name':                        self._getValue(video, ['ownerText', 'runs', 0, 'text']),
+            #     'id':                          self._getValue(video, ['ownerText', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId']),
+            #     'thumbnails':                  self._getValue(video, ['channelThumbnailSupportedRenderers', 'channelThumbnailWithLinkRenderer', 'thumbnail', 'thumbnails']),
+            # },
+            # 'accessibility': {
+            #     'title':                       self._getValue(video, ['title', 'accessibility', 'accessibilityData', 'label']),
+            #     'duration':                    self._getValue(video, ['lengthText', 'accessibility', 'accessibilityData', 'label']),
+            # },
+        }
+        # component['link'] = 'https://www.youtube.com/watch?v=' + component['id']
+        # component['channel']['link'] = 'https://www.youtube.com/channel/' + component['channel']['id']
+        # component['shelfTitle'] = shelfTitle
+        return component
+
     def _getChannelComponent(self, element: dict) -> dict:
         channel = element[channelElementKey]
         component = {

@@ -182,7 +182,7 @@ class HashtagCore(RequestCore, ComponentHandler):
         }
         if self.continuationKey:
             requestBody['continuation'] = self.continuationKey
-        # requestBodyBytes = json.dumps(requestBody).encode('utf_8')
+        
         self.data = requestBody
         self.url = 'https://www.youtube.com/youtubei/v1/browse' + '?' + urlencode({
                 'key': searchKey,
@@ -207,7 +207,9 @@ class HashtagCore(RequestCore, ComponentHandler):
         if self.continuationKey:
             requestBody['continuation'] = self.continuationKey
         
-        self.url = 'https://www.youtube.com/youtubei/v1/browse'
+        self.url = 'https://www.youtube.com/youtubei/v1/browse' + '?' + urlencode({
+                'key': searchKey,
+            })
         self.data = requestBody
         try:
             response = await self.asyncPostRequest()
@@ -221,9 +223,13 @@ class HashtagCore(RequestCore, ComponentHandler):
         self.resultComponents = []
         try:
             if not self.continuationKey:
-                responseSource = self._getValue(json.loads(self.response), hashtagVideosPath)
+                if self.search_type != "shorts":
+                    responseSource = self._getValue(json.loads(self.response), hashtagVideosPath)
+                else:
+                    responseSource = self._getValue(json.loads(self.response), hashtagShortsVideosPath)
             else:
                 responseSource = self._getValue(json.loads(self.response), hashtagContinuationVideosPath)
+            print(responseSource is None)
             if responseSource:
                 for element in responseSource:
                     if richItemKey in element.keys():
@@ -231,8 +237,14 @@ class HashtagCore(RequestCore, ComponentHandler):
                         if videoElementKey in richItemElement.keys():
                             videoComponent = self._getVideoComponent(richItemElement)
                             self.resultComponents.append(videoComponent)
+                        
+                        if shortsElementKey in richItemElement.keys():
+                            videoComponent = self._getShortsComponent(richItemElement)
+                            self.resultComponents.append(videoComponent)
+
                     if len(self.resultComponents) >= self.limit:
                         break
+                print("setting continuationKey")
                 self.continuationKey = self._getValue(responseSource[-1], continuationKeyPath)
         except:
             raise Exception('ERROR: Could not parse YouTube response.')
