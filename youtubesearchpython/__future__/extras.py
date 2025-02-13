@@ -1,4 +1,5 @@
 import copy
+import json
 import httpx
 from typing import Optional, Union
 
@@ -14,7 +15,7 @@ from youtubesearchpython.core.channel import ChannelCore
 
 class Video:
     @staticmethod
-    async def get(videoLink: str, resultMode: int = ResultMode.dict, timeout: int = 2, get_upload_date: bool = False, overridedClient: str = "ANDROID") -> \
+    async def get(videoLink: str, resultMode: int = ResultMode.dict, timeout: int = 2, get_upload_date: bool = False, overridedClient: str = "ANDROID", async_client: Optional[httpx.AsyncClient] = None) -> \
     Union[dict, None]:
         '''Fetches information and formats  for the given video link or ID.
         Returns None if video is unavailable.
@@ -260,14 +261,14 @@ class Video:
                     ]
                 }
         '''
-        video = VideoCore(videoLink, None, resultMode, timeout, get_upload_date, overridedClient = overridedClient)
+        video = VideoCore(videoLink, None, resultMode, timeout, get_upload_date, overridedClient = overridedClient, async_client = async_client)
         if get_upload_date:
             await video.async_html_create()
         await video.async_create()
         return video.result
 
     @staticmethod
-    async def getInfo(videoLink: str, resultMode: int = ResultMode.dict, timeout: int = 2, overridedClient: str = "ANDROID") -> Union[dict, None]:
+    async def getInfo(videoLink: str, resultMode: int = ResultMode.dict, timeout: int = 2, overridedClient: str = "ANDROID", async_client: Optional[httpx.AsyncClient] = None) -> Union[dict, None]:
         '''Fetches only information  for the given video link or ID.
         Returns None if video is unavailable.
 
@@ -347,13 +348,13 @@ class Video:
                 "link": "https://www.youtube.com/watch?v=E07s5ZYygMg",
             }
         '''
-        video = VideoCore(videoLink, "getInfo", resultMode, timeout, True, overridedClient = overridedClient)
+        video = VideoCore(videoLink, "getInfo", resultMode, timeout, True, overridedClient = overridedClient, async_client = async_client)
         await video.async_html_create()
         video.post_request_only_html_processing()
         return video.result
 
     @staticmethod
-    async def getFormats(videoLink: str, resultMode: int = ResultMode.dict, timeout: int = 2, overridedClient: str = "ANDROID") -> Union[dict, None]:
+    async def getFormats(videoLink: str, resultMode: int = ResultMode.dict, timeout: int = 2, overridedClient: str = "ANDROID", async_client: Optional[httpx.AsyncClient] = None) -> Union[dict, None]:
         '''Fetches formats  for the given video link or ID.
         Returns None if video is unavailable.
 
@@ -533,7 +534,7 @@ class Video:
                 }
             }
         '''
-        video = VideoCore(videoLink, "getFormats", resultMode, timeout, False, overridedClient = overridedClient)
+        video = VideoCore(videoLink, "getFormats", resultMode, timeout, False, overridedClient = overridedClient, async_client = async_client)
         await video.async_create()
         return video.result
 
@@ -1858,13 +1859,14 @@ class Comments:
     hasMoreComments = True
     __comments = None
 
-    def __init__(self, playlistLink: str, timeout: int = None):
+    def __init__(self, playlistLink: str, timeout: int = None, async_client: Optional[httpx.AsyncClient] = None):
+        self.async_client = async_client
         self.timeout = timeout
         self.playlistLink = playlistLink
 
     async def getNextComments(self) -> None:
         if self.__comments is None:
-            self.__comments = CommentsCore(self.playlistLink)
+            self.__comments = CommentsCore(self.playlistLink, async_client = self.async_client)
             await self.__comments.async_create()
         else:
             await self.__comments.async_create_next()
@@ -1873,7 +1875,7 @@ class Comments:
 
     @staticmethod
     async def get(playlistLink: str, async_client: Optional[httpx.AsyncClient] = None) -> Union[dict, str, None]:
-        pc = CommentsCore(playlistLink, async_client= async_client)
+        pc = CommentsCore(playlistLink, async_client = async_client)
         await pc.async_create()
         return pc.commentsComponent
 
