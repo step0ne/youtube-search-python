@@ -1788,8 +1788,8 @@ class Hashtag(HashtagCore):
         }
     '''
 
-    def __init__(self, hashtag: str, limit: int = 60, language: str = 'en', region: str = 'US', timeout: int = None, search_type:str = None):
-        super().__init__(hashtag, limit, language, region, timeout, search_type)
+    def __init__(self, hashtag: str, limit: int = 60, language: str = 'en', region: str = 'US', timeout: int = None, search_type:str = None, short_component: bool = False):
+        super().__init__(hashtag, limit, language, region, timeout, search_type, short_component = short_component)
         self.sync_create()
 
 

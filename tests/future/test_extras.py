@@ -23,7 +23,8 @@ async def find_all(
             limit= search_limit, 
             language = "ru" if iso_language is None else iso_language,
             region = "RU" if region is None else region,
-            search_type = search_type
+            search_type = search_type,
+            short_component = short_component
         )
     else:
         search_obj = CustomSearch(
@@ -93,4 +94,19 @@ async def test_hashtag_shorts():
 @pytest.mark.asyncio
 async def test_hashtag_default():
     result = await find_all(hashtag_search = True, search_type = None)
+    assert len(result["result"]) > 0
+
+@pytest.mark.asyncio
+async def test_hashtag_all_short():
+    result = await find_all(hashtag_search = True, search_type = "all", short_component = True,)
+    assert len(result["result"]) > 0
+
+@pytest.mark.asyncio
+async def test_hashtag_shorts_short():
+    result = await find_all(hashtag_search = True, search_type = "shorts", short_component = True,)
+    assert len(result["result"]) > 0
+
+@pytest.mark.asyncio
+async def test_hashtag_default_short():
+    result = await find_all(hashtag_search = True, search_type = None, short_component = True,)
     assert len(result["result"]) > 0

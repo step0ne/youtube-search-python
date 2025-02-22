@@ -15,7 +15,17 @@ class HashtagCore(RequestCore, ComponentHandler):
     response = None
     resultComponents = []
 
-    def __init__(self, hashtag: str, limit: int, language: str, region: str, timeout: int, search_type: str, async_client: Optional[httpx.AsyncClient] = None):
+    def __init__(
+            self, 
+            hashtag: str, 
+            limit: int, 
+            language: str, 
+            region: str, 
+            timeout: int, 
+            search_type: str, 
+            async_client: Optional[httpx.AsyncClient] = None, 
+            short_component: bool = False
+            ):
         super().__init__()
         self.async_client = async_client
         self.hashtag = hashtag
@@ -26,7 +36,8 @@ class HashtagCore(RequestCore, ComponentHandler):
         self.search_type = search_type
         self.continuationKey = None
         self.params = None
-
+        self.short_component = short_component
+        
     def sync_create(self):
         self._getParams()
         if self.search_type is not None:
@@ -235,7 +246,7 @@ class HashtagCore(RequestCore, ComponentHandler):
                     if richItemKey in element.keys():
                         richItemElement = self._getValue(element, [richItemKey, 'content'])
                         if videoElementKey in richItemElement.keys():
-                            videoComponent = self._getVideoComponent(richItemElement)
+                            videoComponent = self._getVideoComponent(richItemElement) if not self.short_component else self._getVideoShortComponent(richItemElement)
                             self.resultComponents.append(videoComponent)
                         
                         if shortsElementKey in richItemElement.keys():

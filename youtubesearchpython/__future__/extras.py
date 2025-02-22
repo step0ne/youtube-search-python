@@ -1831,8 +1831,8 @@ class Hashtag(HashtagCore):
         }
     '''
 
-    def __init__(self, hashtag: str, limit: int = 60, language: str = 'en', region: str = 'US', timeout: int = None, search_type:str = None, async_client: Optional[httpx.AsyncClient] = None):
-        super().__init__(hashtag, limit, language, region, timeout, search_type, async_client = async_client)
+    def __init__(self, hashtag: str, limit: int = 60, language: str = 'en', region: str = 'US', timeout: int = None, search_type:str = None, async_client: Optional[httpx.AsyncClient] = None, short_component: bool = False):
+        super().__init__(hashtag, limit, language, region, timeout, search_type, async_client = async_client, short_component = short_component)
 
     async def next(self) -> dict:
         '''Gets the videos from the next page.
